@@ -27,6 +27,7 @@ namespace MT
 	namespace internal
 	{
 		// Prime numbers for linear congruential generator seed
+		// Large primes per worker → uncorrelated work-stealing → better scaling on high-core CPUs
 		static const uint32 primeNumbers[] = {
 			128473, 135349, 159499, 173839, 209213, 241603, 292709, 314723,
 			343943, 389299, 419473, 465169, 518327, 649921, 748271, 851087,
