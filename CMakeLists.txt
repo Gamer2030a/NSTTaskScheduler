@@ -1,6 +1,4 @@
 # vendor/NSTTaskScheduler/CMakeLists.txt
-# Correct, minimal, working version for the real repo structure
-
 cmake_minimum_required(VERSION 3.31)
 project(NSTTaskScheduler LANGUAGES CXX)
 
@@ -94,6 +92,21 @@ else()
     file(GLOB PLATFORM_SOURCES Scheduler/Include/Platform/Posix/*.cpp)
 endif()
 
+# ------------------------------------------------------------------
+# Squish static library
+# ------------------------------------------------------------------
+file(GLOB_RECURSE SQUISH_SOURCES ThirdParty/Squish/*.cpp)
+add_library(Squish STATIC ${SQUISH_SOURCES})
+target_include_directories(Squish PUBLIC ThirdParty/Squish)
+
+# ------------------------------------------------------------------
+# UnitTest++ (fixed)
+# ------------------------------------------------------------------
+add_subdirectory(ThirdParty/UnitTest++)
+
+# ------------------------------------------------------------------
+# TaskScheduler library target
+# ------------------------------------------------------------------
 add_library(TaskScheduler STATIC
     ${SCHEDULER_SOURCES}
     ${PLATFORM_SOURCES}
@@ -103,10 +116,13 @@ target_include_directories(TaskScheduler PUBLIC
     Scheduler/Include
     ThirdParty/Boost.Context
     ThirdParty/Squish
+    ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/UnitTest++/UnitTest++
 )
 
+target_link_libraries(TaskScheduler PRIVATE Squish)
+
 # ------------------------------------------------------------------
-# TaskSchedulerTests executable (self-contained, no UnitTest++ needed!)
+# TaskSchedulerTests executable
 # ------------------------------------------------------------------
 file(GLOB_RECURSE TEST_SOURCES
     SchedulerTests/*.cpp
@@ -119,9 +135,10 @@ target_include_directories(TaskSchedulerTests PRIVATE
     Scheduler/Include
     ThirdParty/Squish
     ThirdParty/Boost.Context
+    ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/UnitTest++/UnitTest++
 )
 
-target_link_libraries(TaskSchedulerTests PRIVATE TaskScheduler)
+target_link_libraries(TaskSchedulerTests PRIVATE TaskScheduler Squish UnitTest++)
 
 if(NOT IS_WINDOWS)
     target_link_libraries(TaskSchedulerTests PRIVATE pthread)

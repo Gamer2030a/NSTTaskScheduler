@@ -32,7 +32,7 @@
 #ifdef MT_INSTRUMENTED_BUILD
 
 #define MT_SYSTEM_TASK_COLOR (MT::Color::Yellow)
-#define MT_SYSTEM_TASK_NAME "SchedulerTask"
+#define MT_SYSTEM_TASK_NAME L"SchedulerTask"
 #define MT_SYSTEM_TASK_FIBER_NAME "IdleFiber"
 #define MT_SYSTEM_FIBER_INDEX (int32)(-1)
 
